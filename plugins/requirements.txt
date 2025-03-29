@@ -1,0 +1,4 @@
+kicad-python>=0.2.0
+wxPython~=4.2
+protobuf>=5.27.2
+kicad-skip>=0.2.5

@@ -1,0 +1,36 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "Datasheet Application Notes",
+    "description": "Calculate and apply application notes",
+    "description_full": "Generate, calculate and piggy-back application notes from datasheets into schematics.",
+    "identifier": "com.github.mmuman.kicad-application-notes",
+    "type": "plugin",
+    "author": {
+        "name": "François Revol",
+        "contact": {
+            "web": "https://revolf.free.fr"
+        }
+    },
+    "maintainer": {
+        "name": "François Revol",
+        "contact": {
+            "web": "https://revolf.free.fr"
+        }
+    },
+    "license": "MIT",
+    "resources": {
+        "homepage": "https://github.com/mmuman/kicad-application-notes"
+    },
+    "versions": [
+        {
+            "version": "0.1",
+            "status": "development",
+            "kicad_version": "7.99",
+            "runtime": "ipc",
+            "-download_sha256": "YOUR_SHA256_HERE",
+            "-download_size": 1234,
+            "-download_url": "https://github.com/YOUR/DOWNLOAD/URL/kicad-application-notes.zip",
+            "-install_size": 5678
+        }
+    ]
+}

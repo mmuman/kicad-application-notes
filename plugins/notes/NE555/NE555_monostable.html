@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>NE555 monostable</title>
+		<script src="../appnotes.js"></script>
+		<script>
+			function updateFields() {
+				r1 = parseSISuffix(document.getElementById("R1").value);
+				c1 = parseSISuffix(document.getElementById("C1").value);
+				console.log("update: " + r1 + " , " + c1);
+				tw = 1.1 * r1 * c1;
+				document.getElementById("tw").value = formatSISuffix(tw) + "s";
+				console.log("tw: " + tw);
+			}
+		</script>
+	</head>
+	<body onload="updateFields();">
+		<div><i>6.3.1 Monostable Operation</i></div>
+		<div>
+			<img src="NE555_monostable.svg" width="100%"/>
+		</div>
+		<form id="parameters" align="right">
+			<div><label>U1: 
+				<select name="U1" id="U1" value="NE555P" size="1" disabled="disabled">
+					<option value="NE555D">NE555D</option>
+					<option value="NE555P">NE555P</option>
+				</select></label></div>
+			<div><label>R1: 
+				<input type="text" name="R1" id="R1" list="R1values" value="100k" onchange="updateFields();"></label>
+				<datalist id="R1values">
+					<option value="1k">
+					<option value="10k">
+					<option value="100k">
+					<option value="1M">
+					<option value="10M">
+				</datalist></div>
+			<div><label>C1: 
+				<input type="text" name="C1" id="C1" value="10u" onchange="updateFields();"></label></div>
+			<div>t<sub>w</sub> ≈ 1.1 × R1 × C1 ≈ <input id="tw" name="tw" type="text" readonly="readonly" /></div>
+			<!button name="OK">
+		</form>
+	</body>
+</html>
