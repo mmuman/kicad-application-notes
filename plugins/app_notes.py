@@ -19,6 +19,7 @@ from ui.app_notes_ui import AppNotesDialog
 class AppNotes(AppNotesDialog):
     def __init__(self):
         super(AppNotes, self).__init__(None)
+        self.SetIcon(wx.Icon("icon.png"))
         self.kicad = KiCad()
 
         self.browser = wx.html2.WebView.New(parent=self.m_scrolledWindow2)
