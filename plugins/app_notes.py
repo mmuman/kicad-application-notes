@@ -61,6 +61,8 @@ def generate_html(path):
                         code += 'readonly="readonly" '
                     if 'value' in p[name] and p[name]['value']:
                         code += f'value="{p[name]["value"]}" '
+                    if 'SI' in p[name] and p[name]['SI']:
+                        code += f'data-si="true" '
                     if p[name]['input'] == 'text':
                         if 'values' in p[name]:
                             code += f'list="{name}_values" /><datalist id="{name}_values">'

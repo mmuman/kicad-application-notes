@@ -1,6 +1,8 @@
 function parseSISuffix(text) {
 	//console.log(text);
 	m = text.match( /^([0-9]+\.?[0-9]*)([dcmunpfazyµkMGTPEZY]?)?$/ );
+	if (m === null)
+		return NaN;
 	//console.log(m.length);
 	if(m.length < 2)
 		return NaN;
@@ -47,7 +49,8 @@ function formatSISuffix(value) {
 		suffix = "munpfazy"[-exp-1];
 	if (exp > 0)
 		suffix = "kMGTPEZY"[exp-1];
-	text = value.toString() + suffix;
+	// work around ".999999999" cases
+	text = value.toPrecision(4).toString() + suffix;
 	return text;
 }
 
@@ -58,3 +61,23 @@ console.log(formatSISuffix(.035));
 console.log(formatSISuffix(.0035));
 console.log(formatSISuffix(35/1000000));
 */
+
+fields = {}
+
+function updateFields() {
+	for (e of document.getElementById("parameters").querySelectorAll('input,select')) {
+		if (e.hasAttribute("data-si"))
+			fields[e.name] = parseSISuffix(e.value);
+		else
+			fields[e.name] = e.value;
+	}
+	updates = calculate(fields);
+	for (e of document.getElementById("parameters").querySelectorAll('input,select')) {
+		if (!(updates.includes(e.name)))
+			continue;
+		if (e.hasAttribute("data-si"))
+			e.value = formatSISuffix(fields[e.name]);
+		else
+			e.value = fields[e.name];
+	}
+}

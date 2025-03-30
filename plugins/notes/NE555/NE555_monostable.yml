@@ -18,25 +18,23 @@ parameters:
     component: R
     value: 100k
     values: [1k,10k,100k,1M,10M]
+    SI: true
 - C1:
     input: text
     component: C
     value: 10u
+    SI: true
 #- C2:
 - tw:
     input: text
     pre: t<sub>w</sub> ≈ 1.1 × R1 × C1 ≈&nbsp;
     unit: s
-    value:
+    value: "0"
     readonly: true
+    SI: true
 
 script: |
-    function updateFields() {
-        r1 = parseSISuffix(document.getElementById("R1").value);
-        c1 = parseSISuffix(document.getElementById("C1").value);
-        console.log("update: " + r1 + " , " + c1);
-        tw = 1.1 * r1 * c1;
-        document.getElementById("tw").value = formatSISuffix(tw);
-        console.log("tw: " + tw);
+    function calculate(fields) {
+        fields.tw = 1.1 * fields.R1 * fields.C1;
+        return ['tw'];
     }
-
