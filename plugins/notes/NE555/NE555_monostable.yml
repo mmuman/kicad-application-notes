@@ -19,11 +19,13 @@ parameters:
     value: 100k
     values: [1k,10k,100k,1M,10M]
     SI: true
+    unit: Ω
 - C1:
     input: text
     component: C
     value: 10u
     SI: true
+    unit: F
 #- C2:
 - tw:
     input: text
