@@ -1,0 +1,40 @@
+title: 6.3.1 Monostable Operation
+intro: |
+    
+
+footnotes: |
+    Datasheet page 11
+
+parameters:
+- U1:
+    input: select
+    component: U
+    value: NE555P
+    disabled: true
+    values: [NE555P, NE555D]
+- R1:
+    input: text
+    component: R
+    value: 100k
+    values: [1k,10k,100k,1M,10M]
+- C1:
+    input: text
+    component: C
+    value: 10u
+#- C2:
+- tw:
+    input: text
+    pre: t<sub>w</sub> ≈ 1.1 × R1 × C1 ≈&nbsp;
+    value:
+    readonly:
+
+script: |
+    function updateFields() {
+        r1 = parseSISuffix(document.getElementById("R1").value);
+        c1 = parseSISuffix(document.getElementById("C1").value);
+        console.log("update: " + r1 + " , " + c1);
+        tw = 1.1 * r1 * c1;
+        document.getElementById("tw").value = formatSISuffix(tw) + "s";
+        console.log("tw: " + tw);
+    }
+

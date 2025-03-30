@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>{{title}}</title>
+		<script src="../appnotes.js"></script>
+		<script>
+{{ script|safe }}
+		</script>
+	</head>
+	<body onload="updateFields();">
+		<h2><i>{{title}}</i></h2>
+		<div>{{ intro }}</div>
+		<div>
+			<img src="{{basename}}.svg" width="100%"/>
+		</div>
+		<form id="parameters" align="right">
+{% for fname,f in fields.items(): -%}
+			<div>
+				{{ f.pre|safe }}<label>{{ f.label }} {{ f.code|safe }}</label>
+			</div>
+{% endfor %}
+		</form>
+		<div>{{ footnotes }}</div>
+	</body>
+</html>

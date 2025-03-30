@@ -4,8 +4,12 @@ import tempfile
 import time
 import os
 import subprocess
+import sys
 import wx
 import wx.html2
+import yaml
+
+from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from kipy import KiCad
 from kipy.errors import ConnectionError
@@ -14,13 +18,101 @@ from skip import Schematic
 
 from ui.app_notes_ui import AppNotesDialog
 
+generate_all_html_on_startup = True
+
 #selected_note = None
+
+def generate_html(path):
+    html_path = path.replace('.yml', '.html')
+    if os.path.exists(html_path) and (os.path.getmtime(html_path) >= os.path.getmtime(path)):
+        return True
+    with open(path, 'r') as f:
+        configuration = yaml.safe_load(f)
+        #print(configuration)
+        env = Environment(loader=FileSystemLoader("templates"), autoescape=select_autoescape())
+        template = env.get_template("note.html")
+        try:
+            context = {
+                'basename': os.path.basename(path.replace('.yml', '')),
+                'title': configuration['title'],
+                'intro': configuration['intro'],
+                'script': configuration['script'],
+                'fields': {}
+            }
+            #print(configuration['parameters'])
+            for p in configuration['parameters']:
+                #print(p)
+                for name in p:
+                    #print(p[name])
+                    field = p[name]
+                    field['name'] = name
+                    field['label'] = name
+                    #print(field)
+                    code = ""
+                    extra = ""
+                    if p[name]['input'] == 'text':
+                        code = '<input type="text" '
+                    if p[name]['input'] == 'select':
+                        code = '<select '
+                    code += f'id="{name}" name="{name}" '
+                    code += 'onchange="updateFields();" '
+                    if 'disabled' in p[name] and p[name]['disabled']:
+                        code += 'disabled="disabled" '
+                    if 'readonly' in p[name] and p[name]['readonly']:
+                        code += 'readonly="readonly" '
+                    if 'value' in p[name] and p[name]['value']:
+                        code += f'value="{p[name]["value"]}" '
+                    if p[name]['input'] == 'text':
+                        if 'values' in p[name]:
+                            code += f'list="{name}_values" /><datalist id="{name}_values">'
+                            for v in p[name]['values']:
+                                code += f'<option value="{v}">'
+                            code += f'</datalist>'
+                        else:
+                            code += '/>'
+                    if p[name]['input'] == 'select':
+                        code += ' />'
+                        if 'values' in p[name]:
+                            for v in p[name]['values']:
+                                code += f'<option name="{v}">{v}</option>'
+                        code += '</select>'
+                    #code += '/>'
+                    field['code'] = code
+                    context['fields'][name] = field
+            #print(context)
+            with open(html_path, 'w') as html:
+                html.write(template.render(context))
+        except Exception as e:
+            print(e)
+
+
+
+def generate_all_html():
+    d1 = os.getcwd() + "/notes"
+    for entry in os.scandir(d1):
+        if entry.is_dir():
+            print(f"Scanning {entry.name}...")
+            for leaf in os.scandir(entry.path):
+                print(leaf.path)
+                if leaf.is_file() and leaf.name[-4:] == '.yml':
+                    print(leaf.name)
+                    #html_path = leaf.path.replace('.yml', '.html')
+                    generate_html(leaf.path)
 
 class AppNotes(AppNotesDialog):
     def __init__(self):
         super(AppNotes, self).__init__(None)
         self.SetIcon(wx.Icon("icon.png"))
         self.kicad = KiCad()
+
+        self.prog = wx.ProgressDialog(
+            "Processing",
+            "Starting...",
+            100,
+            self,
+            wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME,
+        )
+        wx.Yield()
 
         self.browser = wx.html2.WebView.New(parent=self.m_scrolledWindow2)
         # remove placeholder spacer
@@ -32,14 +124,8 @@ class AppNotes(AppNotesDialog):
         self.Refresh()
         self.Update()
 
-        self.prog = wx.ProgressDialog(
-            "Processing",
-            "Starting...",
-            100,
-            self,
-            wx.PD_AUTO_HIDE | wx.PD_APP_MODAL | wx.PD_ELAPSED_TIME,
-        )
         wx.Yield()
+
         treeRoot = self.notesTree.AddRoot("Notes by reference")
 
         d1 = os.getcwd() + "/notes"
@@ -50,9 +136,12 @@ class AppNotes(AppNotesDialog):
                 wx.Yield()
                 for leaf in os.scandir(entry.path):
                     print(leaf.path)
-                    if leaf.is_file() and leaf.name[-5:] == '.html':
+                    if leaf.is_file() and leaf.name[-4:] == '.yml':
                         print(leaf.name)
-                        noteName = leaf.name[0:-5].replace(f"{entry.name}_","")
+                        html_path = leaf.path.replace('.yml', '.html')
+                        if generate_all_html_on_startup:
+                            generate_html(leaf.path)
+                        noteName = leaf.name[0:-4].replace(f"{entry.name}_","")
                         noteItem = self.notesTree.AppendItem(chipItem, noteName, data=leaf.path)
                 wx.Yield()
         self.notesTree.Expand(treeRoot)
@@ -65,20 +154,22 @@ class AppNotes(AppNotesDialog):
         #if (event.GetEventType() != event.EVT_TREE_ITEM_ACTIVATED):
         #    return
         path = self.notesTree.GetItemData(event.GetItem())
-        print(path)
+        #print(path)
         selected_note = path
         if (path):
             print(path)
+            html_path = path.replace('.yml', '.html') or None
             with tempfile.NamedTemporaryFile(suffix=".svg") as f:
                 #f.write(html.encode())
                 #f.flush()
                 print(f.name)
-                if subprocess.run(["kicad-cli", "sch", "export", "svg", "-n", "-e", "-o", os.path.dirname(path), path.replace('.html', '.kicad_sch')]).returncode == 0:
+                if subprocess.run(["kicad-cli", "sch", "export", "svg", "-n", "-e", "-o", os.path.dirname(path), path.replace('.yml', '.kicad_sch')]).returncode == 0:
                     print("SVG")
 
+                generate_html(path)
 
                 #with open(path.replace('.html', '.kicad_sch'), 'r') as html:
-                with open(path, 'r') as html:
+                with open(html_path, 'r') as html:
                     #self.m_htmlWin2.LoadPage(path)
                     self.browser.SetPage(html=html.read(), baseUrl=f"file://{path}")
 
@@ -89,7 +180,7 @@ class AppNotes(AppNotesDialog):
             success, form = self.browser.RunScript('Object.fromEntries((new FormData(document.getElementById("parameters"))).entries());')
             form = json.loads(form)
             print(form)
-            sch = Schematic(selected.replace('.html', '.kicad_sch'))
+            sch = Schematic(selected.replace('.yml', '.kicad_sch'))
             for ref in form:
                 print(ref)
                 if ref in sch.symbol:
@@ -111,12 +202,14 @@ class AppNotes(AppNotesDialog):
                     wx.MessageBox("Schematics copied to clipboard.", parent=self)
                     #self.EndModal(wx.ID_OK)
 
-
-
     def on_close(self, event):
         self.EndModal(wx.ID_OK)
 
+
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        generate_all_html()
+        sys.exit(0)
     app = wx.App()
     dialog = AppNotes()
     dialog.ShowModal()
