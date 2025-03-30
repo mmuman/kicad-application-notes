@@ -34,12 +34,11 @@ def generate_html(path):
         try:
             context = {
                 'basename': os.path.basename(path.replace('.yml', '')),
-                'title': configuration['title'],
-                'intro': configuration['intro'],
-                'script': configuration['script'],
                 'fields': {}
             }
-            #print(configuration['parameters'])
+            for k in ['title', 'script', 'intro', 'footnotes', 'references']:
+                if k in configuration:
+                    context[k] = configuration[k]
             for p in configuration['parameters']:
                 #print(p)
                 for name in p:
@@ -77,6 +76,8 @@ def generate_html(path):
                                 code += f'<option name="{v}">{v}</option>'
                         code += '</select>'
                     #code += '/>'
+                    if 'unit' in p[name] and p[name]['unit']:
+                        code += p[name]["unit"]
                     field['code'] = code
                     context['fields'][name] = field
             #print(context)
