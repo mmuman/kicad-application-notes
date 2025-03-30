@@ -175,6 +175,8 @@ class AppNotes(AppNotesDialog):
                 with open(html_path, 'r') as html:
                     #self.m_htmlWin2.LoadPage(path)
                     self.browser.SetPage(html=html.read(), baseUrl=f"file://{path}")
+                    #time.sleep(1)
+                    #self.SetTitle("Application Notes - " + self.browser.CurrentTitle)
 
     def run(self, event):
         print(event)
