@@ -5,6 +5,7 @@ import time
 import os
 import subprocess
 import sys
+import uuid
 import wx
 import wx.html2
 import yaml
@@ -192,7 +193,23 @@ class AppNotes(AppNotesDialog):
             success, form = self.browser.RunScript('Object.fromEntries((new FormData(document.getElementById("parameters"))).entries());')
             form = json.loads(form)
             print(form)
+            # TODO: inject this and references
+            note_uuid = str(uuid.uuid4())
             sch = Schematic(selected.replace('.yml', '.kicad_sch'))
+            #print(sch.symbol)
+            for s in sch.symbol:
+                #TODO: actually clone Reference and hide it (Datasheet might not always be here?)
+                # XXX: can't hide properties for now :-(
+                # cf. https://github.com/psychogenic/kicad-skip/issues/8
+                p = s.property.Datasheet.clone()
+                p.name = 'app_note_uuid'
+                p.value = note_uuid
+                #p.effects.hide = True
+                p = s.property.Datasheet.clone()
+                p.name = 'app_note_reference'
+                p.value = s.property.Reference.value
+                #p.effects.hide = True
+            # TODO: replace the symbol/pin/wire UUIDs
             for ref in form:
                 print(ref)
                 if ref in sch.symbol:
