@@ -15,6 +15,7 @@ kicad-app-notes.zip: wxforms
 		plugins/*.txt \
 		plugins/ui/*.py \
 		plugins/notes/*.js \
+		plugins/notes/*/*.yml \
 		plugins/notes/*/*.html \
 		plugins/notes/*/*.kicad_sch
 		unzip -lv $@ | tail -1 | \
