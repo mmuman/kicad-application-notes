@@ -154,7 +154,7 @@ class AppNotes(AppNotesDialog):
                         noteName = leaf.name[0:-4].replace(f"{entry.name}_","")
                         noteItem = self.notesTree.AppendItem(chipItem, noteName, data=leaf.path)
                 wx.Yield()
-        self.notesTree.Expand(treeRoot)
+        #self.notesTree.Expand(treeRoot)
         # avoid main window being put under KiCad
         #time.sleep(0.1)
         self.prog.Destroy()
