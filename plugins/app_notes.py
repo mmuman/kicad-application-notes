@@ -28,6 +28,8 @@ def generate_html(path):
         return True
     with open(path, 'r') as f:
         configuration = yaml.safe_load(f)
+        if configuration is None:
+            return False
         #print(configuration)
         env = Environment(loader=FileSystemLoader("templates"), autoescape=select_autoescape())
         template = env.get_template("note.html")
@@ -39,7 +41,10 @@ def generate_html(path):
             for k in ['title', 'script', 'intro', 'footnotes', 'references']:
                 if k in configuration:
                     context[k] = configuration[k]
-            for p in configuration['parameters']:
+            params = {}
+            if 'parameters' in configuration:
+                params = configuration['parameters']
+            for p in params:
                 #print(p)
                 for name in p:
                     #print(p[name])
@@ -87,6 +92,8 @@ def generate_html(path):
                 html.write(template.render(context))
         except Exception as e:
             print(e)
+            return False
+    return True
 
 
 
