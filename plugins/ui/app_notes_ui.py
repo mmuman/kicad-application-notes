@@ -42,7 +42,7 @@ class AppNotesDialog ( wx.Dialog ):
 		fgSizer5.SetFlexibleDirection( wx.BOTH )
 		fgSizer5.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-		self.notesTree = wx.TreeCtrl( self.m_scrolledWindow4, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE )
+		self.notesTree = wx.TreeCtrl( self.m_scrolledWindow4, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TR_DEFAULT_STYLE|wx.TR_HIDE_ROOT )
 		self.notesTree.SetMinSize( wx.Size( 150,420 ) )
 
 		fgSizer5.Add( self.notesTree, 0, wx.ALL|wx.EXPAND, 5 )
@@ -117,19 +117,5 @@ class AppNotesDialog ( wx.Dialog ):
 	def m_splitter2OnIdle( self, event ):
 		self.m_splitter2.SetSashPosition( 164 )
 		self.m_splitter2.Unbind( wx.EVT_IDLE )
-
-
-###########################################################################
-## Class MyPanel4
-###########################################################################
-
-class MyPanel4 ( wx.Panel ):
-
-	def __init__( self, parent, id = wx.ID_ANY, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.TAB_TRAVERSAL, name = wx.EmptyString ):
-		wx.Panel.__init__ ( self, parent, id = id, pos = pos, size = size, style = style, name = name )
-
-
-	def __del__( self ):
-		pass
 
 
