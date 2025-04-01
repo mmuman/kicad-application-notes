@@ -52,11 +52,19 @@ def generate_html(path):
                     field = p[name]
                     field['name'] = name
                     field['label'] = name
+                    if p[name]['input'] == 'hidden':
+                        field['label'] = ''
+                    if p[name]['input'] == 'hr':
+                        field['label'] = ''
+                        code = '<hr />'
+                        field['code'] = code
+                        context['fields'][name] = field
+                        continue
                     #print(field)
                     code = ""
                     extra = ""
-                    if p[name]['input'] == 'text':
-                        code = '<input type="text" '
+                    if p[name]['input'] in ['text', 'hidden']:
+                        code = f'<input type="{p[name]['input']}" '
                     if p[name]['input'] == 'select':
                         code = '<select '
                     code += f'id="{name}" name="{name}" '
@@ -69,7 +77,7 @@ def generate_html(path):
                         code += f'value="{p[name]["value"]}" '
                     if 'SI' in p[name] and p[name]['SI']:
                         code += f'data-si="true" '
-                    if p[name]['input'] == 'text':
+                    if p[name]['input'] in ['text', 'hidden']:
                         if 'values' in p[name]:
                             code += f'list="{name}_values" /><datalist id="{name}_values">'
                             for v in p[name]['values']:
