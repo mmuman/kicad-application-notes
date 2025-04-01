@@ -43,69 +43,69 @@ def generate_html(path):
         #print(configuration)
         env = Environment(loader=FileSystemLoader("templates"), autoescape=select_autoescape())
         template = env.get_template("note.html")
-        try:
-            context = {
-                'basename': os.path.basename(path.replace('.yml', '')),
-                'fields': {}
-            }
-            for k in ['title', 'script', 'intro', 'footnotes', 'references']:
-                if k in configuration:
-                    context[k] = configuration[k]
-            params = {}
-            if 'parameters' in configuration:
-                params = configuration['parameters']
-            for name in params:
-                #print(name)
-                p = params[name]
-                #print(p)
-                field = p
-                field['name'] = name
-                if 'label' not in field:
-                    field['label'] = name
-                field['label'] = kicad_to_html(field['label'])
-                if p['input'] == 'hidden':
-                    field['label'] = ''
-                if p['input'] == 'hr':
-                    field['label'] = ''
-                    code = '<hr />'
-                    field['code'] = code
-                    context['fields'][name] = field
-                    continue
-                #print(field)
-                code = ""
-                extra = ""
-                if p['input'] in ['text', 'hidden']:
-                    code = f'<input type="{p['input']}" '
-                if p['input'] == 'select':
-                    code = '<select '
-                code += f'id="{name}" name="{name}" '
-                code += 'onchange="updateFields();" '
-                if 'disabled' in p and p['disabled']:
-                    code += 'disabled="disabled" '
-                if 'readonly' in p and p['readonly']:
-                    code += 'readonly="readonly" '
-                if 'value' in p and p['value']:
-                    code += f'value="{p["value"]}" '
-                if 'SI' in p and p['SI']:
-                    code += f'data-si="true" '
-                if p['input'] in ['text', 'hidden']:
-                    if 'values' in p:
-                        code += f'list="{name}_values" /><datalist id="{name}_values">'
-                        for v in p['values']:
-                            code += f'<option value="{v}">'
-                        code += f'</datalist>'
-                    else:
-                        code += '/>'
-                if p['input'] == 'select':
-                    code += ' />'
-                    if 'values' in p:
-                        for v in p['values']:
-                            code += f'<option name="{v}">{v}</option>'
-                    code += '</select>'
-                #code += '/>'
+        context = {
+            'basename': os.path.basename(path.replace('.yml', '')),
+            'fields': {}
+        }
+        for k in ['title', 'script', 'intro', 'footnotes', 'references']:
+            if k in configuration:
+                context[k] = configuration[k]
+        params = {}
+        if 'parameters' in configuration:
+            params = configuration['parameters']
+        for name in params:
+            #print(name)
+            p = params[name]
+            print(p)
+            field = p
+            field['name'] = name
+            if 'label' not in field:
+                field['label'] = name
+            field['label'] = kicad_to_html(field['label'])
+            if p['input'] == 'hidden':
+                field['label'] = ''
+            if p['input'] == 'hr':
+                field['label'] = ''
+                code = '<hr />'
                 field['code'] = code
                 context['fields'][name] = field
-            #print(context)
+                continue
+            #print(field)
+            code = ""
+            extra = ""
+            if p['input'] in ['text', 'hidden']:
+                code = f'<input type="{p['input']}" '
+            if p['input'] == 'select':
+                code = '<select '
+            code += f'id="{name}" name="{name}" '
+            code += 'onchange="updateFields();" '
+            if 'disabled' in p and p['disabled']:
+                code += 'disabled="disabled" '
+            if 'readonly' in p and p['readonly']:
+                code += 'readonly="readonly" '
+            if 'value' in p and p['value']:
+                code += f'value="{p["value"]}" '
+            if 'SI' in p and p['SI']:
+                code += f'data-si="true" '
+            if p['input'] in ['text', 'hidden']:
+                if 'values' in p:
+                    code += f'list="{name}_values" /><datalist id="{name}_values">'
+                    for v in p['values']:
+                        code += f'<option value="{v}">'
+                    code += f'</datalist>'
+                else:
+                    code += '/>'
+            if p['input'] == 'select':
+                code += ' />'
+                if 'values' in p:
+                    for v in p['values']:
+                        code += f'<option name="{v}">{v}</option>'
+                code += '</select>'
+            #code += '/>'
+            field['code'] = code
+            context['fields'][name] = field
+        #print(context)
+        try:
             with open(html_path, 'w') as html:
                 html.write(template.render(context))
         except Exception as e:
