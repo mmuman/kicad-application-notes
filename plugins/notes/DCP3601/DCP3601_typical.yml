@@ -7,67 +7,67 @@ footnotes: |
 references: [Datasheet page 11]
 
 parameters:
-- U1:
-    input: select
-    component: U
-    value: DCP3601
-    disabled: true
-    values: [DCP3601]
-- L1:
-    input: text
-    component: L
-    value: 10u
-    SI: true
-    unit: H
-- R1:
-    input: text
-    component: R
-    value: 100k
-    values: [1k,10k,100k,1M,10M]
-    SI: true
-    unit: Ω
-- R2:
-    input: text
-    component: R
-    value: 100k
-    values: [1k,10k,100k,1M,10M]
-    SI: true
-    unit: Ω
-- C1:
-    input: text
-    component: C
-    value: 10u
-    SI: true
-    pre: C<sub>IN</sub>&nbsp;
-    unit: F
-- C2:
-    input: text
-    component: C
-    value: 10u
-    SI: true
-    pre: C<sub>OUT</sub>&nbsp;
-    unit: F
-- C3:
-    input: text
-    component: C
-    value: 10u
-    SI: true
-    pre: C<sub>BOOT</sub>&nbsp;
-    unit: F
-- Vin:
-    input: text
-    component: C
-    value: 25
-    SI: true
-    unit: V
-    pre: V<sub>IN</sub>&nbsp;
-- Vout:
-    input: text
-    component: C
-    value: 15
-    SI: true
-    unit: V
-    pre: V<sub>OUT</sub>&nbsp;
+    U1:
+        input: select
+        component: U
+        value: DCP3601
+        disabled: true
+        values: [DCP3601]
+    R1:
+        input: text
+        component: R
+        value: 100k
+        values: [1k,10k,100k,1M,10M]
+        SI: true
+        unit: Ω
+    R2:
+        input: text
+        component: R
+        value: 100k
+        values: [1k,10k,100k,1M,10M]
+        SI: true
+        unit: Ω
+    L1:
+        input: text
+        component: L
+        value: 10u
+        SI: true
+        unit: H
+    C1:
+        input: text
+        component: C
+        value: 10u
+        SI: true
+        pre: C<sub>IN</sub>&nbsp;
+        unit: F
+    C2:
+        input: text
+        component: C
+        value: 10u
+        SI: true
+        pre: C<sub>OUT</sub>&nbsp;
+        unit: F
+    C3:
+        input: text
+        component: C
+        value: 10u
+        SI: true
+        pre: C<sub>BOOT</sub>&nbsp;
+        unit: F
+    Vin:
+        input: text
+        component: C
+        value: 25
+        SI: true
+        unit: V
+        pre: V<sub>IN</sub>&nbsp;
+    Vout:
+        input: text
+        component: C
+        value: 15
+        SI: true
+        unit: V
+        pre: V<sub>OUT</sub>&nbsp;
 
 script: |
     function calculate(fields) {

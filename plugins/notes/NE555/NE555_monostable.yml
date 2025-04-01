@@ -7,42 +7,42 @@ footnotes: |
 references: [Datasheet page 11]
 
 parameters:
-- U1:
-    input: select
-    component: U
-    value: NE555P
-    disabled: true
-    values: [NE555P, NE555D]
-- HR1:
-    input: hr
-- R1:
-    input: text
-    component: R
-    value: 100k
-    values: [1k,10k,100k,1M,10M]
-    SI: true
-    unit: Ω
-- C1:
-    input: text
-    component: C
-    value: 10u
-    SI: true
-    unit: F
-#- C2:
-- HR2:
-    input: hr
-- tw:
-    input: text
-    label: t_{w} ≈ 1.1 × R1 × C1 ≈
-    unit: s
-    value: "0"
-    readonly: true
-    SI: true
+    U1:
+        input: select
+        component: U
+        value: NE555P
+        disabled: true
+        values: [NE555P, NE555D]
+    HR1:
+        input: hr
+    R1:
+        input: text
+        component: R
+        value: 100k
+        values: [1k,10k,100k,1M,10M]
+        SI: true
+        unit: Ω
+    C1:
+        input: text
+        component: C
+        value: 10u
+        SI: true
+        unit: F
+    #  C2:
+    HR2:
+        input: hr
+    tw:
+        input: text
+        label: t_{w} ≈ 1.1 × R1 × C1 ≈
+        unit: s
+        value: "0"
+        readonly: true
+        SI: true
 
-- text_box_content:
-    input: hidden
-    hidden: true
-    value: "R1,C1,tw"
+    text_box_content:
+        input: hidden
+        hidden: true
+        value: "R1,C1,tw"
 
 script: |
     function calculate(fields) {
