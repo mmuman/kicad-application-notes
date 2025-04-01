@@ -33,7 +33,7 @@ parameters:
     input: hr
 - tw:
     input: text
-    pre: t<sub>w</sub> ≈ 1.1 × R1 × C1 ≈&nbsp;
+    label: t_{w} ≈ 1.1 × R1 × C1 ≈
     unit: s
     value: "0"
     readonly: true

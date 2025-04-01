@@ -3,6 +3,7 @@ import json
 import tempfile
 import time
 import os
+import re
 import subprocess
 import sys
 import uuid
@@ -23,6 +24,13 @@ from ui.app_notes_ui import AppNotesDialog
 generate_all_html_on_startup = True
 
 #selected_note = None
+
+# simplistic conversion for a subset of the markup
+def kicad_to_html(s):
+    s = re.sub('_{([^{}]*)}', '<sub>\\1</sub>', s)
+    s = re.sub('\\^{([^{}]*)}', '<sup>\\1</sup>', s)
+    s = re.sub('~{([^{}]*)}', '<span style="text-decoration:overline">\\1</span>', s)
+    return s
 
 def generate_html(path):
     html_path = path.replace('.yml', '.html')
@@ -52,7 +60,9 @@ def generate_html(path):
                     #print(p[name])
                     field = p[name]
                     field['name'] = name
-                    field['label'] = name
+                    if 'label' not in field:
+                        field['label'] = name
+                    field['label'] = kicad_to_html(field['label'])
                     if p[name]['input'] == 'hidden':
                         field['label'] = ''
                     if p[name]['input'] == 'hr':
@@ -93,8 +103,6 @@ def generate_html(path):
                                 code += f'<option name="{v}">{v}</option>'
                         code += '</select>'
                     #code += '/>'
-                    if 'unit' in p[name] and p[name]['unit']:
-                        code += p[name]["unit"]
                     field['code'] = code
                     context['fields'][name] = field
             #print(context)
