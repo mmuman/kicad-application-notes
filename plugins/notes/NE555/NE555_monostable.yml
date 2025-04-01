@@ -13,6 +13,8 @@ parameters:
     value: NE555P
     disabled: true
     values: [NE555P, NE555D]
+- HR1:
+    input: hr
 - R1:
     input: text
     component: R
@@ -27,6 +29,8 @@ parameters:
     SI: true
     unit: F
 #- C2:
+- HR2:
+    input: hr
 - tw:
     input: text
     pre: t<sub>w</sub> ≈ 1.1 × R1 × C1 ≈&nbsp;
@@ -34,6 +38,11 @@ parameters:
     value: "0"
     readonly: true
     SI: true
+
+- text_box_content:
+    input: hidden
+    hidden: true
+    value: "R1,C1,tw"
 
 script: |
     function calculate(fields) {

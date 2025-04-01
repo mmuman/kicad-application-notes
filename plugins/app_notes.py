@@ -16,6 +16,7 @@ from kipy import KiCad
 from kipy.errors import ConnectionError
 
 from skip import Schematic
+from skip.sexp.parser import ParsedValue
 
 from ui.app_notes_ui import AppNotesDialog
 
@@ -197,7 +198,10 @@ class AppNotes(AppNotesDialog):
     def run(self, event):
         print(event)
         selected = self.notesTree.GetItemData(self.notesTree.GetSelection())
-        if selected:
+        if selected is None:
+            return
+        with open(selected, 'r') as yml:
+            configuration = yaml.safe_load(yml)
             success, form = self.browser.RunScript('Object.fromEntries((new FormData(document.getElementById("parameters"))).entries());')
             form = json.loads(form)
             print(form)
@@ -230,6 +234,17 @@ class AppNotes(AppNotesDialog):
                     print(sch.symbol[ref].property.Value.value)
                     sch.symbol[ref].property.Value.value = form[ref]
                     print(sch.symbol[ref].property.Value.value)
+                if ref == 'text_box_content':
+                    textboxes = [ sch.text_box ]
+                    if (type(sch.text_box) != ParsedValue):
+                        #print("COLL")
+                        textboxes = sch.text_box
+                    for t in textboxes:
+                        if t.value == '<Application notes>':
+                            t.value = ""
+                            for f in form[ref].split(','):
+                                #pre = configuration['parameters'][t]['pre']
+                                t.value += f"{f} = {form[f]}\n"
             # we have to make a file just for that
             with tempfile.NamedTemporaryFile(suffix=".kicad_sch") as f:
                 sch.write(f.name)
