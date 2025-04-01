@@ -209,6 +209,10 @@ class AppNotes(AppNotesDialog):
                 p.name = 'app_note_reference'
                 p.value = s.property.Reference.value
                 #p.effects.hide = True
+                p = s.property.Datasheet.clone()
+                p.name = 'app_note_name'
+                p.value = os.path.basename(selected.replace('.yml', ''))
+                #p.effects.hide = True
             # TODO: replace the symbol/pin/wire UUIDs
             for ref in form:
                 print(ref)
