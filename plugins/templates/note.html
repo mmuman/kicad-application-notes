@@ -17,7 +17,7 @@
 		<form id="parameters" align="right">
 {% for fname,f in fields.items(): -%}
 			<div>
-				{{ f.pre|safe }}<label>{{ f.label }} {{ f.code|safe }}</label>
+				{{ (f.pre ~ '&nbsp;')|safe if f.pre else '' }}{{ ('<label>' ~ f.label)|safe if f.label else '' }}{{ f.code|safe }}{{ '</label>'|safe if f.label }}
 			</div>
 {% endfor %}
 		</form>
