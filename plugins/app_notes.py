@@ -251,8 +251,15 @@ class AppNotes(AppNotesDialog):
                         if t.value == '<Application notes>':
                             t.value = ""
                             for f in form[ref].split(','):
-                                #pre = configuration['parameters'][t]['pre']
-                                t.value += f"{f} = {form[f]}\n"
+                                p = configuration['parameters'][f]
+                                unit = ''
+                                if 'unit' in p:
+                                    unit = p['unit']
+                                if 'label' in p:
+                                    label = p['label']
+                                else:
+                                    label = f'{f} ='
+                                t.value += f"{label} {form[f]}{unit}\n"
             # we have to make a file just for that
             with tempfile.NamedTemporaryFile(suffix=".kicad_sch") as f:
                 sch.write(f.name)

@@ -781,7 +781,7 @@
 	(text_box "<Application notes>"
 		(exclude_from_sim no)
 		(at 41.91 2.54 0)
-		(size 31.75 10.16)
+		(size 34.29 10.16)
 		(margins 0.9525 0.9525 0.9525 0.9525)
 		(stroke
 			(width 0)
