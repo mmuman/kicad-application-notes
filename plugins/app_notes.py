@@ -56,7 +56,7 @@ def generate_html(path):
         for name in params:
             #print(name)
             p = params[name]
-            print(p)
+            #print(p)
             field = p
             field['name'] = name
             if 'label' not in field:
@@ -163,9 +163,9 @@ class AppNotes(AppNotesDialog):
                 chipItem = self.notesTree.AppendItem(treeRoot, entry.name)
                 wx.Yield()
                 for leaf in os.scandir(entry.path):
-                    print(leaf.path)
+                    #print(leaf.path)
                     if leaf.is_file() and leaf.name[-4:] == '.yml':
-                        print(leaf.name)
+                        #print(leaf.name)
                         html_path = leaf.path.replace('.yml', '.html')
                         if generate_all_html_on_startup:
                             generate_html(leaf.path)
@@ -185,14 +185,14 @@ class AppNotes(AppNotesDialog):
         #print(path)
         selected_note = path
         if (path):
-            print(path)
+            #print(path)
             html_path = path.replace('.yml', '.html') or None
             with tempfile.NamedTemporaryFile(suffix=".svg") as f:
                 #f.write(html.encode())
                 #f.flush()
-                print(f.name)
+                #print(f.name)
                 if subprocess.run(["kicad-cli", "sch", "export", "svg", "-n", "-e", "-o", os.path.dirname(path), path.replace('.yml', '.kicad_sch')]).returncode == 0:
-                    print("SVG")
+                    print(f"SVG generated for {path}")
 
                 generate_html(path)
 
@@ -204,7 +204,7 @@ class AppNotes(AppNotesDialog):
                     #self.SetTitle("Application Notes - " + self.browser.CurrentTitle)
 
     def run(self, event):
-        print(event)
+        #print(event)
         selected = self.notesTree.GetItemData(self.notesTree.GetSelection())
         if selected is None:
             return
@@ -240,13 +240,13 @@ class AppNotes(AppNotesDialog):
                 #p.effects.hide = True
             #print(uuid_map)
             for ref in form:
-                print(ref)
+                #print(ref)
                 if ref in sch.symbol:
-                    print(ref)
+                    #print(ref)
                     #print(sch.symbol[ref])
-                    print(sch.symbol[ref].property.Value.value)
+                    #print(sch.symbol[ref].property.Value.value)
                     sch.symbol[ref].property.Value.value = form[ref]
-                    print(sch.symbol[ref].property.Value.value)
+                    #print(sch.symbol[ref].property.Value.value)
                 if ref == 'text_box_content':
                     textboxes = [ sch.text_box ]
                     if (type(sch.text_box) != ParsedValue):
