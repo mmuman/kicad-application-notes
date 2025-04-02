@@ -212,12 +212,17 @@ class AppNotes(AppNotesDialog):
             configuration = yaml.safe_load(yml)
             success, form = self.browser.RunScript('Object.fromEntries((new FormData(document.getElementById("parameters"))).entries());')
             form = json.loads(form)
-            print(form)
-            # TODO: inject this and references
+            #print(form)
             note_uuid = str(uuid.uuid4())
+            # We change symbol UUIDs to make sure KiCad doesn't change them for us,
+            # like when pasting twice the same application.
+            # This should allow someday to edit them while keeping the link to the PCB footprints
+            uuid_map = {}
             sch = Schematic(selected.replace('.yml', '.kicad_sch'))
             #print(sch.symbol)
             for s in sch.symbol:
+                uuid_map[s.uuid.value] = str(uuid.uuid4())
+                s.uuid.value = uuid_map[s.uuid.value]
                 #TODO: actually clone Reference and hide it (Datasheet might not always be here?)
                 # XXX: can't hide properties for now :-(
                 # cf. https://github.com/psychogenic/kicad-skip/issues/8
@@ -233,7 +238,7 @@ class AppNotes(AppNotesDialog):
                 p.name = 'app_note_name'
                 p.value = os.path.basename(selected.replace('.yml', ''))
                 #p.effects.hide = True
-            # TODO: replace the symbol/pin/wire UUIDs
+            #print(uuid_map)
             for ref in form:
                 print(ref)
                 if ref in sch.symbol:
@@ -248,18 +253,27 @@ class AppNotes(AppNotesDialog):
                         #print("COLL")
                         textboxes = sch.text_box
                     for t in textboxes:
-                        if t.value == '<Application notes>':
-                            t.value = ""
-                            for f in form[ref].split(','):
-                                p = configuration['parameters'][f]
-                                unit = ''
-                                if 'unit' in p:
-                                    unit = p['unit']
-                                if 'label' in p:
-                                    label = p['label']
-                                else:
-                                    label = f'{f} ='
-                                t.value += f"{label} {form[f]}{unit}\n"
+                        if t.value != '<Application notes>':
+                            continue
+                        # remap UUID
+                        uuid_map[t.uuid.value] = str(uuid.uuid4())
+                        t.uuid.value = uuid_map[t.uuid.value]
+                        # store the text_box (remapped) UUID into the first symbol
+                        p = sch.symbol[next(iter(configuration['parameters']))].property.Datasheet.clone()
+                        p.name = 'app_note_text_box_uuid'
+                        p.value = t.uuid.value
+                        # replace the text
+                        t.value = ""
+                        for f in form[ref].split(','):
+                            p = configuration['parameters'][f]
+                            unit = ''
+                            if 'unit' in p:
+                                unit = p['unit']
+                            if 'label' in p:
+                                label = p['label']
+                            else:
+                                label = f'{f} ='
+                            t.value += f"{label} {form[f]}{unit}\n"
             # we have to make a file just for that
             with tempfile.NamedTemporaryFile(suffix=".kicad_sch") as f:
                 sch.write(f.name)
@@ -272,6 +286,7 @@ class AppNotes(AppNotesDialog):
                     wx.TheClipboard.Close()
                     wx.MessageBox("Schematics copied to clipboard.", parent=self)
                     #self.EndModal(wx.ID_OK)
+            # TODO: same with PCB
 
     def on_close(self, event):
         self.EndModal(wx.ID_OK)
